@@ -624,30 +624,14 @@ def generateForm():
         #print (genCount)
         worksheet4.write('B1', '#')
         worksheet4.write('C1', '#')
+        #The following nested loops generates the interlocked region/age/gender markers as needed
         for count, eachRow in enumerate(range(2,2+regCount*genCount*ageCount,genCount*ageCount)):
             worksheet4.write('A' + str(eachRow), e3.get() + str(count+1)) 
             for count2, eachRow2 in enumerate(range(2+count*genCount*ageCount,2+(count+1)*genCount*ageCount,genCount)):
-                worksheet4.write('B' + str(eachRow2), e2.get() + str(count2+1))
-                
-                for count3, eachRow3 in enumerate(range(2+count2*genCount,(2+(count2+1)*genCount))):
-                    print ("EXCEL INDEX: " + str(eachRow+eachRow2+eachRow3))
-                    print ("MARKER: " + e1.get() + str(count3+1))
-                    print ("COUNT1: " + str(count))
-                    print ("COUNT2: " + str(count2))
-                    print (range(2+count2*genCount,(2+(count2+1)*genCount)))
-                    print ("-------------------------------")
-                    worksheet4.write('C' + str(eachRow+eachRow2+eachRow3), e1.get() + str(count3+1))
-                    worksheet4.write('D' + str(eachRow3), "inf")                 
-        # myCountStart = 2
-        # myCountEnd = genCount*ageCount*regCount
-        
-        # while myCountStart <= myCountEnd:
-        #     for eachRow in range(0,genCount):
-        #         worksheet4.write('C' + str(myCountStart), e1.get() + str(eachRow+1))
-        #         worksheet4.write('D' + str(myCountStart), "inf")  
-        #         myCountStart+=1
-
- 
+                worksheet4.write('B' + str(eachRow2), e2.get() + str(count2+1))              
+                for count3, eachRow3 in enumerate(range(count2*genCount,((count2+1)*genCount))):
+                    worksheet4.write('C' + str(2+(count*ageCount*genCount)+eachRow3), e1.get() + str(count3+1))
+                    worksheet4.write('D' + str(2+(count*ageCount*genCount)+eachRow3), "inf")                  
     elif (interlockVar == 1 and (genVar+ageVar+regVar == 2)):
         if genVar+ageVar == 2 and regVar == 0:
             doubleInterlock(workbook, ageCount, genCount,e2.get(),e1.get())
@@ -659,6 +643,7 @@ def generateForm():
     # via the close() method.
     workbook.close()
 
+#Function to handle the double interlocked demographics
 def doubleInterlock(workbook, inter1, inter2,variable1,variable2):
     print("in doubleInt Function")
     worksheet4 = workbook.add_worksheet('Interlock Quota')
@@ -668,6 +653,7 @@ def doubleInterlock(workbook, inter1, inter2,variable1,variable2):
         worksheet4.write('A' + str(eachRow), variable1 + str(count+1)) 
         for count2, eachRow2 in enumerate(range(2+count*inter2,2+(count+1)*inter2)):
             worksheet4.write('B' + str(eachRow2), variable2 + str(count2+1))
+            worksheet4.write('C' + str(eachRow2), "inf")
 
 mySubmit = Button(myFrame1, text="Generate Form", command=generateForm)
 mySubmit.grid(row=50, sticky=S, column=2)
