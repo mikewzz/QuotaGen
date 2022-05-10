@@ -41,7 +41,7 @@ def enableInt():
         genButton2.config(state=NORMAL)
         ageButton2.config(state=NORMAL)
         regButton2.config(state=NORMAL)
-        intButton2.config(state=NORMAL)
+        intButton2.config(state=NORMAL)       
         is_on=False
     else:
         genButton2.deselect()
@@ -53,27 +53,51 @@ def enableInt():
         ageButton2.config(state=DISABLED)
         regButton2.config(state=DISABLED)
         intButton2.config(state=DISABLED)
-
         is_on=True       
+
+def disableHQ():
+    global is_on
+
+    if is_on:
+        genHQ.deselect()
+        ageHQ.deselect()
+        regHQ.deselect()
+        genHQ.config(state=DISABLED)
+        ageHQ.config(state=DISABLED)
+        regHQ.config(state=DISABLED)
+        is_on=False
+    else:
+        genHQ.config(state=NORMAL)
+        ageHQ.config(state=NORMAL)
+        regHQ.config(state=NORMAL)
+        is_on=True          
 #Main page - 1st set of interlock
+
 var1 = IntVar()
-Checkbutton(myFrame1, text="Gender", variable=var1).grid(row=2, column=1, sticky=W)
+genButton1 = Checkbutton(myFrame1, text="Gender", variable=var1)
+genButton1.grid(row=2, column=1, sticky=W)
 var2 = IntVar()
-Checkbutton(myFrame1, text="Age", variable=var2).grid(row=3, column=1, sticky=W)
+ageButton1 = Checkbutton(myFrame1, text="Age", variable=var2)
+ageButton1.grid(row=3, column=1, sticky=W)
 var3 = IntVar()
-Checkbutton(myFrame1, text="Region", variable=var3).grid(row=4, column=1, sticky=W)
+regButton1 = Checkbutton(myFrame1, text="Region", variable=var3)
+regButton1.grid(row=4, column=1, sticky=W)
 var4 = IntVar()
 Checkbutton(myFrame1, text="Interlock 1", variable=var4, command=enableInt).grid(row=5, column=1, sticky=W)
+
 #Main page - HQ checkboxes for 1st set of interlock
 var11 = IntVar()
-Checkbutton(myFrame1, variable=var11).grid(row=2)
+genHQ = Checkbutton(myFrame1, variable=var11)
+genHQ.grid(row=2)
 var12 = IntVar()
-Checkbutton(myFrame1, variable=var12).grid(row=3)
+ageHQ = Checkbutton(myFrame1, variable=var12)
+ageHQ.grid(row=3)
 var13 = IntVar()
-Checkbutton(myFrame1, variable=var13).grid(row=4)
+regHQ = Checkbutton(myFrame1, variable=var13)
+regHQ.grid(row=4)
 var14 = IntVar()
-Checkbutton(myFrame1, variable=var14).grid(row=5)
-#Main page - 2nd set of interlock
+Checkbutton(myFrame1, variable=var14, command=disableHQ).grid(row=5)
+#Main page - 2nd set of interlock not sure if we should use
 var5 = IntVar()
 genButton2 = Checkbutton(myFrame1, state=DISABLED, text="Gender", variable=var5)
 genButton2.grid(row=2, column=8, sticky=W)
@@ -144,6 +168,13 @@ e9.insert(0, 0)
 e7.configure(state='disabled')
 e8.configure(state='disabled')
 e9.configure(state='disabled')
+
+#Arrays used to calculate hard quotas
+InterlockArray = []
+#genArray = []
+ageArray = []
+regArray = []
+
 #GEN TAB
 genDict = {
   1: 2,
@@ -166,38 +197,50 @@ genPerc = {
   6: 0
 }
 
+sv2.trace("w", lambda name, index, mode, sv2=sv2: callback2(sv2))
+    
 def callback2(sv):
-    #if (genCombo.current() == 2):   
-        myFrame4.entries=[]
+    # myFrame4.entries=[]
+    # myFrame4.GenPercList = []
 
-        for widget in myFrame4.winfo_children():
-            widget.destroy()
+    #print (sv.get())
 
-        for y in range(int(sv.get())):
-            gen_entry = Entry(myFrame4)
-            gen_name = Entry(myFrame4)
-            
-            #Create gender name text boxes
-            gen_name.grid(row=y, column=2, pady=10, padx=5)
-            #Fill gender name text boxes with default gender labels
-            gen_name.insert(0, (genNames[y+1])) 
-            #Create gender % text boxes
-            gen_entry.grid(row=y, column=3, pady=10, padx=5)
-            #Fill gender % text boxes with default gender %
-            gen_entry.insert(0, (str(genPerc[y+1]*100)) + "%") 
-            Label(myFrame4, text="Gen" + str(y+1)).grid(row=y,column=1)
-            myFrame4.entries.append(gen_name) 
+    for widget in myFrame4.winfo_children():
+        widget.destroy()
 
-sv2.trace("w", lambda name, index, mode, sv=sv2: callback2(sv))
+    for y in range(int(sv.get())):
+        myFrame4.gen_entry = Entry(myFrame4)
+        gen_name = Entry(myFrame4)
+        
+        #Create gender name text boxes
+        gen_name.grid(row=y, column=2, pady=10, padx=5)
+        #Fill gender name text boxes with default gender labels
+        gen_name.insert(0, (genNames[y+1])) 
+        #Create gender % text boxes
+        myFrame4.gen_entry.grid(row=y, column=3, pady=10, padx=5)
+        #Fill gender % text boxes with default gender %
+        myFrame4.gen_entry.insert(0, (genPerc[y+1])) 
+        Label(myFrame4, text="Gen" + str(y+1)).grid(row=y,column=1)
+        myFrame4.entries.append(gen_name) 
+        myFrame4.GenPercList.append(genPerc[y+1]) 
+        print(myFrame4.gen_entry.get())
+
+def calcGen():     
+    myFrame4.genArray = []
+    #for j in range(int(e7.get())):
+        #print(myFrame4.gen_entry[j+1].get())
+    print (myFrame4.genArray)
 
 def genSelected(event):
     e7.configure(state='normal')
     e7.delete(0,"end")
 
-    myFrame4.labels=[]
+    #myFrame4.labels=[]
 
     for widget in myFrame4.winfo_children():
         widget.destroy()
+    myFrame4.entries=[]
+    myFrame4.GenPercList = []
 
     e7.insert(0,(int(genDict[genCombo.current()])))
     # for x in range(int(genDict[genCombo.current()])):
@@ -205,7 +248,8 @@ def genSelected(event):
     #         Label(myFrame4, text="Gender " + str(x+1)).grid(row=x,column=1)
     #         gen_entry.grid(row=x, column=2, pady=10, padx=5)   
     #         gen_entry.insert(0, (genNames[x+1])) 
-            #myFrame4.labels.append(gen_entry)      
+            #myFrame4.labels.append(gen_entry)     
+
     if genCombo.current() == 1:
         # e7.insert(0,(int(genDict[genCombo.current()])))
         e7.configure(state='disabled')        
@@ -223,7 +267,8 @@ def genSelected(event):
         #     gen_entry.grid(row=x, column=2, pady=10, padx=5)   
         #     gen_entry.insert(0, (genNames[x+1])) 
         #     myFrame4.labels.append(gen_entry)  
-    
+    frame4Button = Button(myFrame4, text="Save Gender Settings", command=calcGen)
+    frame4Button.grid(row=0,column=6, sticky=E)     
 #GENDER SETTINGS
 GENOPTIONS = [
     "SELECT ONE",
@@ -282,10 +327,34 @@ def callback1(sv):
 sv1.trace("w", lambda name, index, mode, sv=sv1: callback1(sv))
 def checkBCBreak():
     print (regCombo.current())
+def calcReg(): 
+    tempTotal = 0
+    
+    myFrame2.AgePercList = []
 
+    #This loop will compile and insert the 'total population' within each age range and insert it into the total in range column
+    for x in range(int(ageCombo.get())):
+        tempCount = 0
+        for y in range(int(myFrame2.lowRange[x].get()),int(myFrame2.highRange[x].get())+1):
+            tempCount = tempCount + ageCensus[y]
+        myFrame2.totalList[x].configure(state='normal')
+        myFrame2.totalList[x].insert(0, tempCount)
+        myFrame2.totalList[x].configure(state='disabled')
+        tempTotal = tempTotal + int(myFrame2.totalList[x].get())
+    
+    #print (tempTotal)
+    #This loop will compile and insert the 'percentage' of each age ranges' total population relative to the overall sum and insert it into the percentage column
+    for j in range(int(ageCombo.get())):
+        myFrame2.PercList[j].configure(state='normal')
+        myFrame2.PercList[j].insert(0, (int(myFrame2.totalList[j].get())/tempTotal))
+        myFrame2.PercList[j].configure(state='disabled')
+        myFrame2.AgePercList.append(int(myFrame2.totalList[j].get())/tempTotal)
+        
 def regSelected(event):
     e9.configure(state='normal')
     e9.delete(0,"end")
+
+    myFrame3.RegPercList=[]
 
     for widget in myFrame3.winfo_children():
         widget.destroy()
@@ -294,7 +363,7 @@ def regSelected(event):
     Label(myFrame3, text="Region Percent").grid(row=0,column=2)
     #BC Breaks variable set
     rvar1 = IntVar()
-    Checkbutton(myFrame3, text="BC breaks", variable=rvar1, command=checkBCBreak).grid(row=0, column=10, sticky=W)       
+    Checkbutton(myFrame3, text="BC breaks", variable=rvar1, command=checkBCBreak).grid(row=0, column=5, sticky=W)       
     #print (rvar1.get())
 
     if not(regCombo.current() == 6):
@@ -312,9 +381,11 @@ def regSelected(event):
             Label(myFrame3, text=str((regDict[startIndex])[x])).grid(row=x+1,column=1)
             reg_entry.grid(row=x+1, column=2, pady=10, padx=5)
             reg_entry.insert(0, ((regPerc[startIndex])[x])) 
+            myFrame3.RegPercList.append((regPerc[startIndex])[x])
     else:
         e9.insert(0, 6)
-
+    frame3Button = Button(myFrame3, text="Save Region Settings", command=calcReg)
+    frame3Button.grid(row=0,column=10, sticky=E)  
 
 #Refresh button to check if 'bc breaks' checked off
 #myRefresh = Button(myFrame3, text="REFRESH", command=regSelected)
@@ -346,6 +417,9 @@ def calcAge():
     #myFrame2.totalList[0].insert(0, ageCensus[int(myFrame2.lowRange[0].get())])
     
     tempTotal = 0
+    
+    myFrame2.AgePercList = []
+
     #This loop will compile and insert the 'total population' within each age range and insert it into the total in range column
     for x in range(int(ageCombo.get())):
         tempCount = 0
@@ -359,9 +433,11 @@ def calcAge():
     #print (tempTotal)
     #This loop will compile and insert the 'percentage' of each age ranges' total population relative to the overall sum and insert it into the percentage column
     for j in range(int(ageCombo.get())):
-        myFrame2.percList[j].configure(state='normal')
-        myFrame2.percList[j].insert(0, str((int(myFrame2.totalList[j].get())/tempTotal)*100) + "%")
-        myFrame2.percList[j].configure(state='disabled')
+        myFrame2.PercList[j].configure(state='normal')
+        myFrame2.PercList[j].insert(0, (int(myFrame2.totalList[j].get())/tempTotal))
+        myFrame2.PercList[j].configure(state='disabled')
+        myFrame2.AgePercList.append(int(myFrame2.totalList[j].get())/tempTotal)
+        
 
 def ageSelected(event): 
     e8.configure(state='normal')
@@ -375,7 +451,8 @@ def ageSelected(event):
     myFrame2.lowRange = []
     myFrame2.highRange = []
     myFrame2.totalList = []
-    myFrame2.percList = []
+    myFrame2.PercList = []
+    
     Label(myFrame2, text="Age Range").grid(row=0,column=2,columnspan=2)
     Label(myFrame2, text="Total in range").grid(row=0,column=4)
     Label(myFrame2, text="Age Percent").grid(row=0,column=5)  
@@ -395,9 +472,10 @@ def ageSelected(event):
         myFrame2.lowRange.append(age_entry1)
         myFrame2.highRange.append(age_entry2)
         myFrame2.totalList.append(age_count)
-        myFrame2.percList.append(age_perc)
+        myFrame2.PercList.append(age_perc)
+        
     
-    frame2Button = Button(myFrame2, text="Calculate Age Percentages", command=calcAge)
+    frame2Button = Button(myFrame2, text="Calculate Age Percentages/Save Settings", command=calcAge)
     frame2Button.grid(row=0,column=6, sticky=E)  
     
 
@@ -585,8 +663,9 @@ def generateForm():
             worksheet.write('C' + str(eachRow+2), myFrame4.entries[count].get())
 
             worksheet1.write('A' + str(count+2), e1.get() + str(count+1))
-            worksheet1.write('B' + str(count+2), "inf")
-
+            worksheet1.write('B' + str(count+2), GenderQuotaCalc(count))
+        print (myFrame4.GenPercList)
+        print (myFrame4.genArray)
     #Age
     if (ageVar == 1):
         worksheet2 = workbook.add_worksheet('Age Quota')
@@ -598,9 +677,9 @@ def generateForm():
             worksheet.write('C' + str(eachRow), myFrame2.lowRange[count].get() + "-" + myFrame2.highRange[count].get())
 
             worksheet2.write('A' + str(count+2), e2.get() + str(count+1))
-            worksheet2.write('B' + str(count+2), "inf")            
+            worksheet2.write('B' + str(count+2), AgeQuotaCalc(count))            
         indice = indice + ageCount
-
+        print (myFrame2.AgePercList)
     #Region
     if (regVar == 1):
         worksheet3 = workbook.add_worksheet('Region Quota')
@@ -615,9 +694,9 @@ def generateForm():
                 worksheet.write('C' + str(eachRow), myFrame3.entries[count].get()) 
 
             worksheet3.write('A' + str(count+2), e3.get() + str(count+1))    
-            worksheet3.write('B' + str(count+2), "inf")    
+            worksheet3.write('B' + str(count+2), RegQuotaCalc(count))    
         indice = indice + regCount
-
+        print (myFrame3.RegPercList)
     if (interlockVar == 1 and (genVar+ageVar+regVar == 3)):
         worksheet4 = workbook.add_worksheet('Interlock Quota')
         worksheet4.write('A1', '#=Interlock Quota')    
@@ -630,31 +709,58 @@ def generateForm():
             for count2, eachRow2 in enumerate(range(2+count*genCount*ageCount,2+(count+1)*genCount*ageCount,genCount)):
                 worksheet4.write('B' + str(eachRow2), e2.get() + str(count2+1))              
                 for count3, eachRow3 in enumerate(range(count2*genCount,((count2+1)*genCount))):
+                    InterlockArray.append(myFrame3.RegPercList[count]*myFrame2.AgePercList[count2]*myFrame4.GenPercList[count3])
                     worksheet4.write('C' + str(2+(count*ageCount*genCount)+eachRow3), e1.get() + str(count3+1))
-                    worksheet4.write('D' + str(2+(count*ageCount*genCount)+eachRow3), "inf")                  
+                    worksheet4.write('D' + str(2+(count*ageCount*genCount)+eachRow3), round(InterlockArray[(count*ageCount*genCount)+eachRow3]*int(e10.get()),None)) 
+                    
+        print (InterlockArray)
+                                    
     elif (interlockVar == 1 and (genVar+ageVar+regVar == 2)):
         if genVar+ageVar == 2 and regVar == 0:
-            doubleInterlock(workbook, ageCount, genCount,e2.get(),e1.get())
+            doubleInterlock(workbook, ageCount, genCount,e2.get(),e1.get(),myFrame2.AgePercList,myFrame4.GenPercList)
         elif genVar+regVar == 2 and ageVar == 0:
-            doubleInterlock(workbook, regCount, genCount,e3.get(),e1.get())
+            doubleInterlock(workbook, regCount, genCount,e3.get(),e1.get(),myFrame3.RegPercList,myFrame4.GenPercList)
         elif ageVar+ageVar == 2 and genVar == 0:
-            doubleInterlock(workbook, regCount, ageCount,e3.get(),e2.get())
+            doubleInterlock(workbook, regCount, ageCount,e3.get(),e2.get(),myFrame3.RegPercList,myFrame2.AgePercList)
     # Finally, close the Excel file
     # via the close() method.
     workbook.close()
 
 #Function to handle the double interlocked demographics
-def doubleInterlock(workbook, inter1, inter2,variable1,variable2):
+def doubleInterlock(workbook, inter1, inter2,variable1,variable2,perclist1,perclist2):
     print("in doubleInt Function")
+    InterlockArray = []
     worksheet4 = workbook.add_worksheet('Interlock Quota')
     worksheet4.write('A1', '#=Interlock Quota')       
     worksheet4.write('B1', '#')
     for count, eachRow in enumerate(range(2,2+inter1*inter2,inter2)):
         worksheet4.write('A' + str(eachRow), variable1 + str(count+1)) 
         for count2, eachRow2 in enumerate(range(2+count*inter2,2+(count+1)*inter2)):
+            InterlockArray.append(perclist1[count]*perclist2[count2])
             worksheet4.write('B' + str(eachRow2), variable2 + str(count2+1))
-            worksheet4.write('C' + str(eachRow2), "inf")
+            worksheet4.write('C' + str(eachRow2), round(InterlockArray[eachRow2-2]*int(e10.get()),None))
 
+#Following 3 functions calculates the gender, age and region hard quotas/soft qutoas respectively, also will store the % of each in an array for interlock quota calulation
+def GenderQuotaCalc(count):
+    if int(var11.get()==1):
+        return round(float(myFrame4.GenPercList[count])*float(e10.get()),None)
+    else:
+        return round(float(myFrame4.GenPercList[count])*float(e10.get()),None)*10
+
+def AgeQuotaCalc(count):
+    if int(var12.get()==1):
+        return round(float(myFrame2.AgePercList[count])*float(e10.get()),None)
+    else:
+        return round(float(myFrame2.AgePercList[count])*float(e10.get()),None)*10
+
+def RegQuotaCalc(count):
+    if int(var13.get()==1):
+        return round(float(myFrame3.RegPercList[count])*float(e10.get()),None)
+    else:
+        return round(float(myFrame3.RegPercList[count])*float(e10.get()),None)*10
+
+# def calcInterlock(array1,array2,array3):
+#     if array1
 mySubmit = Button(myFrame1, text="Generate Form", command=generateForm)
 mySubmit.grid(row=50, sticky=S, column=2)
 
