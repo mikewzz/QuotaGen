@@ -1,21 +1,25 @@
 import enum
 import pandas as pd
 import xlsxwriter
+import customtkinter as CustTK
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
-window=Tk()
+CustTK.set_appearance_mode("System")  # Modes: system (default), light, dark
+CustTK.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
+window=CustTK.CTk()
 #add title for the window
 window.title("Canview Quota Generator V1")
-window.geometry("1000x800+150+250")
+window.geometry("1300x900+150+250")
 
 my_notebook = ttk.Notebook(window)
 my_notebook.grid(row=0)
 
-myFrame1 = Frame(my_notebook, width=900, height=800)
-myFrame2 = Frame(my_notebook, width=900, height=800)
-myFrame3 = Frame(my_notebook, width=900, height=800)
-myFrame4 = Frame(my_notebook, width=900, height=800)
+myFrame1 = CustTK.CTkFrame(my_notebook, width=1300, height=850, padx=20, pady=20)
+myFrame2 = CustTK.CTkFrame(my_notebook, width=1300, height=850, padx=20, pady=20)
+myFrame3 = CustTK.CTkFrame(my_notebook, width=1300, height=850, padx=20, pady=20)
+myFrame4 = CustTK.CTkFrame(my_notebook, width=1300, height=850, padx=20, pady=20)
 myFrame1.pack(fill="both",expand=1)
 myFrame2.pack(fill="both",expand=1)
 myFrame3.pack(fill="both",expand=1)
@@ -28,32 +32,46 @@ my_notebook.add(myFrame3, text="Region Settings")
 my_notebook.add(myFrame4, text="Gender Settings")
 
 #Main page - 1st row labels + N total
-Label(myFrame1, text="Hard Quota:").grid(row=1, sticky=W)
-Label(myFrame1, text="Demos Used:").grid(row=1, column=1, sticky=W)
-Label(myFrame1, text="Number of variable groups").grid(row=1, column=7, sticky=E)
-Label(myFrame1, text="TOTAL N: ").grid(row=1, column=4)
+CustTK.CTkLabel(myFrame1, text="Hard Quota:").grid(row=1, sticky=W)
+CustTK.CTkLabel(myFrame1, text="Demos Used:").grid(row=1, column=1, sticky=W)
+CustTK.CTkLabel(myFrame1, text="Number of variable groups").grid(row=1, column=7, sticky=E)
+CustTK.CTkLabel(myFrame1, text="TOTAL N: ").grid(row=1, column=4)
+#Main page - 2nd set of interlock not sure if we should use
+# var5 = IntVar()
+# genButton2 = CustTK.CTkCheckBox(myFrame1, state=DISABLED, text="Gender", variable=var5)
+# genButton2.grid(row=2, column=8, sticky=W)
+# var6 = IntVar()
+# ageButton2 = CustTK.CTkCheckBox(myFrame1, state=DISABLED, text="Age", variable=var6)
+# ageButton2.grid(row=3, column=8, sticky=W)
+# var7 = IntVar()
+# regButton2 = CustTK.CTkCheckBox(myFrame1, state=DISABLED, text="Region", variable=var7)
+# regButton2.grid(row=4, column=8, sticky=W)
+# var8 = IntVar()
+# intButton2 = CustTK.CTkCheckBox(myFrame1, state=DISABLED, text="Interlock 2", variable=var8)
+# intButton2.grid(row=5, column=8, sticky=W)
+
 is_on=True
 #defined function to enable 2nd set of interlocks when 1st interlock button clicked
-def enableInt():
-    global is_on
+# def enableInt():
+#     global is_on
 
-    if is_on:
-        genButton2.config(state=NORMAL)
-        ageButton2.config(state=NORMAL)
-        regButton2.config(state=NORMAL)
-        intButton2.config(state=NORMAL)       
-        is_on=False
-    else:
-        genButton2.deselect()
-        ageButton2.deselect()
-        regButton2.deselect()
-        intButton2.deselect()
+#     if is_on:
+#         genButton2.config(state=NORMAL)
+#         ageButton2.config(state=NORMAL)
+#         regButton2.config(state=NORMAL)
+#         intButton2.config(state=NORMAL)       
+#         is_on=False
+#     else:
+#         genButton2.deselect()
+#         ageButton2.deselect()
+#         regButton2.deselect()
+#         intButton2.deselect()
 
-        genButton2.config(state=DISABLED)
-        ageButton2.config(state=DISABLED)
-        regButton2.config(state=DISABLED)
-        intButton2.config(state=DISABLED)
-        is_on=True       
+#         genButton2.config(state=DISABLED)
+#         ageButton2.config(state=DISABLED)
+#         regButton2.config(state=DISABLED)
+#         intButton2.config(state=DISABLED)
+#         is_on=True       
 
 def disableHQ():
     global is_on
@@ -74,72 +92,92 @@ def disableHQ():
 #Main page - 1st set of interlock
 
 var1 = IntVar()
-genButton1 = Checkbutton(myFrame1, text="Gender", variable=var1)
+genButton1 = CustTK.CTkCheckBox(myFrame1, text="Gender", variable=var1)
 genButton1.grid(row=2, column=1, sticky=W)
 var2 = IntVar()
-ageButton1 = Checkbutton(myFrame1, text="Age", variable=var2)
+ageButton1 = CustTK.CTkCheckBox(myFrame1, text="Age", variable=var2)
 ageButton1.grid(row=3, column=1, sticky=W)
 var3 = IntVar()
-regButton1 = Checkbutton(myFrame1, text="Region", variable=var3)
+regButton1 = CustTK.CTkCheckBox(myFrame1, text="Region", variable=var3)
 regButton1.grid(row=4, column=1, sticky=W)
 var4 = IntVar()
-Checkbutton(myFrame1, text="Interlock 1", variable=var4, command=enableInt).grid(row=5, column=1, sticky=W)
+interlockButton1 = CustTK.CTkCheckBox(myFrame1, text="Interlock 1", variable=var4)
+interlockButton1.grid(row=5, column=1, sticky=W, pady=10)
 
 #Main page - HQ checkboxes for 1st set of interlock
 var11 = IntVar()
-genHQ = Checkbutton(myFrame1, variable=var11)
+genHQ = CustTK.CTkCheckBox(myFrame1, variable=var11, text="")
 genHQ.grid(row=2)
 var12 = IntVar()
-ageHQ = Checkbutton(myFrame1, variable=var12)
+ageHQ = CustTK.CTkCheckBox(myFrame1, variable=var12, text="")
 ageHQ.grid(row=3)
 var13 = IntVar()
-regHQ = Checkbutton(myFrame1, variable=var13)
+regHQ = CustTK.CTkCheckBox(myFrame1, variable=var13, text="")
 regHQ.grid(row=4)
 var14 = IntVar()
-Checkbutton(myFrame1, variable=var14, command=disableHQ).grid(row=5)
-#Main page - 2nd set of interlock not sure if we should use
-var5 = IntVar()
-genButton2 = Checkbutton(myFrame1, state=DISABLED, text="Gender", variable=var5)
-genButton2.grid(row=2, column=8, sticky=W)
-var6 = IntVar()
-ageButton2 = Checkbutton(myFrame1, state=DISABLED, text="Age", variable=var6)
-ageButton2.grid(row=3, column=8, sticky=W)
-var7 = IntVar()
-regButton2 = Checkbutton(myFrame1, state=DISABLED, text="Region", variable=var7)
-regButton2.grid(row=4, column=8, sticky=W)
-var8 = IntVar()
-intButton2 = Checkbutton(myFrame1, state=DISABLED, text="Interlock 2", variable=var8)
-intButton2.grid(row=5, column=8, sticky=W)
+CustTK.CTkCheckBox(myFrame1, variable=var14, text="", command=disableHQ).grid(row=5)
 
 
-ttk.Separator(myFrame1, orient='horizontal').grid(row=6, columnspan=200, sticky="ew")
+ttk.Separator(myFrame1, orient='horizontal').grid(row=6, columnspan=200, pady = 20, sticky="ew")
+ttk.Separator(myFrame1, orient='horizontal').grid(row=20, columnspan=200, pady = 20, sticky="ew")
 
+CustTK.CTkLabel(myFrame1, text="Gender Marker: ").grid(row=2,column=2)
+CustTK.CTkLabel(myFrame1, text="Age Marker: ").grid(row=3,column=2)
+CustTK.CTkLabel(myFrame1, text="Region Marker: ").grid(row=4,column=2)
 
-Label(myFrame1, text="Gender Marker: ").grid(row=2,column=2)
-Label(myFrame1, text="Age Marker: ").grid(row=3,column=2)
-Label(myFrame1, text="Region Marker: ").grid(row=4,column=2)
+e1 = CustTK.CTkEntry(myFrame1, width=50, border_width=2, corner_radius=5)
+e2 = CustTK.CTkEntry(myFrame1, width=50, border_width=2, corner_radius=5)
+e3 = CustTK.CTkEntry(myFrame1, width=50, border_width=2, corner_radius=5)
 
-e1 = Entry(myFrame1, width=10, borderwidth=3)
-e2 = Entry(myFrame1, width=10, borderwidth=3)
-e3 = Entry(myFrame1, width=10, borderwidth=3)
-
-e1.grid(row=2,column=3)
-e2.grid(row=3,column=3)
-e3.grid(row=4,column=3)
+e1.grid(row=2,column=3, pady=2)
+e2.grid(row=3,column=3, pady=2)
+e3.grid(row=4,column=3, pady=2)
 
 e1.insert(0, "gen")
 e2.insert(0, "age")
 e3.insert(0, "reg")
 
 
-Label(myFrame1, text="Gender Var: ").grid(row=2,column=4)
-Label(myFrame1, text="Age Var: ").grid(row=3,column=4)
-Label(myFrame1, text="Region Var: ").grid(row=4,column=4)
+CustTK.CTkLabel(myFrame1, text="Gender Var: ").grid(row=2,column=4)
+CustTK.CTkLabel(myFrame1, text="Age Var: ").grid(row=3,column=4)
+CustTK.CTkLabel(myFrame1, text="Region Var: ").grid(row=4,column=4)
 
-e4 = Entry(myFrame1, width=25, borderwidth=3)
-e5 = Entry(myFrame1, width=25, borderwidth=3)
-e6 = Entry(myFrame1, width=25, borderwidth=3)
-e10 = Entry(myFrame1, width=25, borderwidth=3)
+#This function ensures only integers/digitscan be typed into sample size field
+def validateInt10(P):
+    if len(P)== 0 or len(P) < 10 and P.isdigit():
+        return True
+    else:
+        return False
+vcmdInt = (myFrame1.register(validateInt10),'%P')
+
+#This function ensures only floats with leading 0s/periods can be typed into the percentage fields
+def validateFloat(P):
+    text = P  
+    print('text:', text)
+
+    parts = text.split('.')
+    parts_number = len(parts)
+
+    if parts_number > 2:
+        #print('too many dots')
+        return False
+
+    if parts_number > 1 and parts[1]: # don't check empty string
+        if not parts[1].isdecimal() or len(parts[1]) > 5:
+            #print('wrong second part')
+            return False
+
+    if parts_number > 0 and parts[0]: # don't check empty string
+        if not parts[0].isdecimal() or len(parts[0]) > 1 or ('0' not in parts[0]):
+            #print('wrong first part')
+            return False
+
+    return True
+
+e4 = CustTK.CTkEntry(myFrame1, width=125, border_width=2, corner_radius=5)
+e5 = CustTK.CTkEntry(myFrame1, width=125, border_width=2, corner_radius=5)
+e6 = CustTK.CTkEntry(myFrame1, width=125, border_width=2, corner_radius=5)
+e10 = CustTK.CTkEntry(myFrame1, width=150, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdInt))
 
 e10.grid(row=1,column=5)
 e4.grid(row=2,column=5)
@@ -152,10 +190,11 @@ e6.insert(0, "REGION")
 
 sv1 = StringVar()
 sv2 = StringVar()
+sv3 = StringVar()
 
-e7 = Entry(myFrame1, width=3, borderwidth=3, textvariable=sv2)
-e8 = Entry(myFrame1, width=3, borderwidth=3)
-e9 = Entry(myFrame1, width=3, borderwidth=3, textvariable=sv1)
+e7 = CustTK.CTkEntry(myFrame1, width=30, border_width=2, corner_radius=5, textvariable=sv2)
+e8 = CustTK.CTkEntry(myFrame1, width=30, border_width=2, corner_radius=5, textvariable=sv3)
+e9 = CustTK.CTkEntry(myFrame1, width=30, border_width=2, corner_radius=5, textvariable=sv1)
 
 e7.grid(row=2,column=7)
 e8.grid(row=3,column=7)
@@ -169,11 +208,71 @@ e7.configure(state='disabled')
 e8.configure(state='disabled')
 e9.configure(state='disabled')
 
+#Begins some code to setup the CELL BALANCE FIELDS
+#Main page - Checkbox buttons to indicate which demos shoudl be balanced for in cell balance
+
+var10 = IntVar()
+genBalance2 = CustTK.CTkCheckBox(myFrame1, text="Gender", variable=var10)
+genBalance2.grid(row=7, column=2, sticky=W, pady=2)
+var11 = IntVar()
+ageBalance2 = CustTK.CTkCheckBox(myFrame1, text="Age", variable=var11)
+ageBalance2.grid(row=8, column=2, sticky=W, pady=2)
+var12 = IntVar()
+regBalance2 = CustTK.CTkCheckBox(myFrame1, text="Region", variable=var12)
+regBalance2.grid(row=9, column=2, sticky=W, pady=2)
+
+
+#legacy vs cross table setup
+cellBalType = IntVar(0)
+def radiobutton_event():
+    print("radiobutton toggled, current value:", cellBalType.get())
+radiobutton_1 = CustTK.CTkRadioButton(myFrame1, text="Cross Table Method",command=radiobutton_event, variable= cellBalType, value=1)
+radiobutton_2 = CustTK.CTkRadioButton(myFrame1, text="Legacy Method",command=radiobutton_event, variable= cellBalType, value=2)
+radiobutton_1.grid(row=7, column=1, sticky=W, pady=2, padx=10)
+radiobutton_2.grid(row=8, column=1, sticky=W, pady=2, padx=10)
+
+#Entry fields for number of cells
+CustTK.CTkLabel(myFrame1, text="Num Cells").grid(row=7, column=0)
+e_cb1 = CustTK.CTkEntry(myFrame1, width=50, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdInt))
+e_cb1.grid(row=8,column=0)
+CustTK.CTkLabel(myFrame1, text="Num Picks").grid(row=9, column=0)
+e_cb2 = CustTK.CTkEntry(myFrame1, width=50, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdInt))
+e_cb2.grid(row=10,column=0)
+
+#cell qualifications
+CustTK.CTkLabel(myFrame1, text="Qual Variable, only one is needed/allowed (i.e., cellQual)").grid(row=7, column=4,columnspan=4)
+e_cb3 = CustTK.CTkEntry(myFrame1, width=450, state=DISABLED, border_width=2, corner_radius=5)
+e_cb3.grid(row=8,column=4,columnspan=4,padx=20)
+CustTK.CTkLabel(myFrame1, text="Qual Row Labels, separated by commas (I.e., r1,r2,r3,r4)").grid(row=9, column=4,columnspan=4)
+e_cb4 = CustTK.CTkEntry(myFrame1, width=450, state=DISABLED, border_width=2, corner_radius=5)
+e_cb4.grid(row=10,column=4,columnspan=4,padx=20)
+CustTK.CTkLabel(myFrame1, text="Priority Row Labels, separated by commas (I.e., r1,r2,r3,r4)").grid(row=11, column=4,columnspan=4)
+e_cb5 = CustTK.CTkEntry(myFrame1, width=450, state=DISABLED, border_width=2, corner_radius=5)
+e_cb5.grid(row=12,column=4,columnspan=4,padx=20)
+
+
+#defined function to enable cell qualification fields
+def enableCQ():
+    global is_on
+
+    if is_on:
+        e_cb3.config(state=NORMAL)
+        e_cb4.config(state=NORMAL)     
+        is_on=False
+    else:
+        e_cb3.config(state=DISABLED)
+        e_cb4.config(state=DISABLED)
+        is_on=True       
+#checkbox to indicate if cells are qualified for or if completely random
+var13 = IntVar()
+qualBalance = CustTK.CTkCheckBox(myFrame1, text="Cell Qualifications?", variable=var13, command=enableCQ)
+qualBalance.grid(row=10, column=2, sticky=W, pady=2,columnspan=2)
+
 #Arrays used to calculate hard quotas
 InterlockArray = []
 #genArray = []
-ageArray = []
-regArray = []
+#ageArray = []
+#regArray = []
 
 #GEN TAB
 genDict = {
@@ -208,9 +307,12 @@ def callback2(sv):
     for widget in myFrame4.winfo_children():
         widget.destroy()
 
+    #created this array to be able to keep track of whatever is entered into the entries and recalculate dynamically
+    myFrame4.genArray = []
+    vcmdFt = (myFrame4.register(validateFloat),'%P')
     for y in range(int(sv.get())):
-        myFrame4.gen_entry = Entry(myFrame4)
-        gen_name = Entry(myFrame4)
+        myFrame4.gen_entry = CustTK.CTkEntry(myFrame4,validate="key",validatecommand=(vcmdFt))
+        gen_name = CustTK.CTkEntry(myFrame4)
         
         #Create gender name text boxes
         gen_name.grid(row=y, column=2, pady=10, padx=5)
@@ -220,29 +322,22 @@ def callback2(sv):
         myFrame4.gen_entry.grid(row=y, column=3, pady=10, padx=5)
         #Fill gender % text boxes with default gender %
         myFrame4.gen_entry.insert(0, (genPerc[y+1])) 
+        myFrame4.genArray.append(myFrame4.gen_entry)
         Label(myFrame4, text="Gen" + str(y+1)).grid(row=y,column=1)
         myFrame4.entries.append(gen_name) 
         myFrame4.GenPercList.append(genPerc[y+1]) 
-        print(myFrame4.gen_entry.get())
-
-def calcGen():     
-    myFrame4.genArray = []
-    #for j in range(int(e7.get())):
-        #print(myFrame4.gen_entry[j+1].get())
-    print (myFrame4.genArray)
 
 def genSelected(event):
     e7.configure(state='normal')
-    e7.delete(0,"end")
-
-    #myFrame4.labels=[]
+    #e7.delete(0,"end")
 
     for widget in myFrame4.winfo_children():
         widget.destroy()
     myFrame4.entries=[]
     myFrame4.GenPercList = []
 
-    e7.insert(0,(int(genDict[genCombo.current()])))
+    #e7.insert(0,(int(genDict[genCombo.current()])))
+    sv2.set(int(genDict[genCombo.current()]))
     # for x in range(int(genDict[genCombo.current()])):
     #         gen_entry = Entry(myFrame4)
     #         Label(myFrame4, text="Gender " + str(x+1)).grid(row=x,column=1)
@@ -267,8 +362,7 @@ def genSelected(event):
         #     gen_entry.grid(row=x, column=2, pady=10, padx=5)   
         #     gen_entry.insert(0, (genNames[x+1])) 
         #     myFrame4.labels.append(gen_entry)  
-    frame4Button = Button(myFrame4, text="Save Gender Settings", command=calcGen)
-    frame4Button.grid(row=0,column=6, sticky=E)     
+    
 #GENDER SETTINGS
 GENOPTIONS = [
     "SELECT ONE",
@@ -276,7 +370,7 @@ GENOPTIONS = [
     "Male/Female W/GEN LF"
 ]
 
-genCombo = ttk.Combobox(myFrame1,value=GENOPTIONS)
+genCombo = ttk.Combobox(myFrame1,value=GENOPTIONS, justify=CENTER)
 genCombo.current(0)
 genCombo.bind("<<ComboboxSelected>>", genSelected)
 genCombo.grid(row=2,column=6, sticky=W)
@@ -287,122 +381,107 @@ regDict = {
   2: ["WEST","ONTARIO","EN QC","ATLANTIC"],
   3: ["WEST","ONTARIO","FR QC","ATLANTIC"],
   4: ["WEST","ONTARIO","ATLANTIC"],
-  5: ["NORTHEAST","MIDWEST","SOUTH","WEST"],
-  6: [""],
-  7: ["BC","PRAIRIES","ONTARIO","EN QC","FR QC","ATLANTIC"],
-  8: ["BC","PRAIRIES","ONTARIO","EN QC","ATLANTIC"],
-  9: ["BC","PRAIRIES","ONTARIO","FR QC","ATLANTIC"],
-  10: ["BC","PRAIRIES","ONTARIO","ATLANTIC"]
+  5: ["BC","PRAIRIES","ONTARIO","EN QC","FR QC","ATLANTIC"],
+  6: ["BC","PRAIRIES","ONTARIO","EN QC","ATLANTIC"],
+  7: ["BC","PRAIRIES","ONTARIO","FR QC","ATLANTIC"],
+  8: ["BC","PRAIRIES","ONTARIO","ATLANTIC"],
+  9: ["NORTHEAST","MIDWEST","SOUTH","WEST"],
+  10: [""]  
+}
+regCounter = {
+  1: 4,
+  2: 4,
+  3: 4,
+  4: 3,
+  5: 6,
+  6: 5,
+  7: 5,
+  8: 4,
+  9: 4,
+  10: [""]  
 }
 regPerc = {
   1: [0.3012,0.3898,0.2362,0.0728],
   2: [0.3850,0.4980,0.0240,0.0930],
   3: [0.3106,0.4020,0.2122,0.0752],
   4: [0.3942,0.5104,0.0954],
-  5: [0.178186900785363,0.215534586540639,0.372431791932523,0.233846720741475],
-  6: [0],
-  7: [0.1323,0.1688,0.3898,0.024,0.2122,0.0729],
-  8: [0.169,0.216,0.498,0.024,0.093],
-  9: [0.1365,0.1741,0.402,0.2122,0.0752],
-  10: [0.1732,0.221,0.5104,0.0954]
+  5: [0.1323,0.1688,0.3898,0.024,0.2122,0.0729],
+  6: [0.169,0.216,0.498,0.024,0.093],
+  7: [0.1365,0.1741,0.402,0.2122,0.0752],
+  8: [0.1732,0.221,0.5104,0.0954],
+  9: [0.178186900785363,0.215534586540639,0.372431791932523,0.233846720741475],
+  10: [0]
 }
+
 def callback1(sv):
-    if (regCombo.current() == 6):
+    if (regCombo.current() == 10):
         myFrame3.entries=[]
-    
+        myFrame3.regArray = []
+
         for widget in myFrame3.winfo_children():
             widget.destroy()
-        Label(myFrame3, text="Region Label").grid(row=0,column=1)
-        Label(myFrame3, text="Region Percent").grid(row=0,column=2)    
+        CustTK.CTkLabel(myFrame3, text="Region Label").grid(row=0,column=1)
+        CustTK.CTkLabel(myFrame3, text="Region Percent").grid(row=0,column=2)    
 
         for y in range(int(sv.get())):
-            reg_entry = Entry(myFrame3)
-            reg_name = Entry(myFrame3)
+            vcmdFt = (myFrame3.register(validateFloat),'%P')
+            myFrame3.reg_entry = CustTK.CTkEntry(myFrame3,validate="key",validatecommand=(vcmdFt))
+            reg_name = CustTK.CTkEntry(myFrame3)
             
             reg_name.grid(row=y+1, column=1, pady=10, padx=5)
-            reg_entry.grid(row=y+1, column=2, pady=10, padx=5)
+            myFrame3.reg_entry.grid(row=y+1, column=2, pady=10, padx=5)
+            myFrame3.regArray.append(myFrame3.reg_entry)
             reg_name.insert(0, "REGION " + str(y+1))
             myFrame3.entries.append(reg_name) 
 
 sv1.trace("w", lambda name, index, mode, sv=sv1: callback1(sv))
-def checkBCBreak():
-    print (regCombo.current())
-def calcReg(): 
-    tempTotal = 0
-    
-    myFrame2.AgePercList = []
 
-    #This loop will compile and insert the 'total population' within each age range and insert it into the total in range column
-    for x in range(int(ageCombo.get())):
-        tempCount = 0
-        for y in range(int(myFrame2.lowRange[x].get()),int(myFrame2.highRange[x].get())+1):
-            tempCount = tempCount + ageCensus[y]
-        myFrame2.totalList[x].configure(state='normal')
-        myFrame2.totalList[x].insert(0, tempCount)
-        myFrame2.totalList[x].configure(state='disabled')
-        tempTotal = tempTotal + int(myFrame2.totalList[x].get())
-    
-    #print (tempTotal)
-    #This loop will compile and insert the 'percentage' of each age ranges' total population relative to the overall sum and insert it into the percentage column
-    for j in range(int(ageCombo.get())):
-        myFrame2.PercList[j].configure(state='normal')
-        myFrame2.PercList[j].insert(0, (int(myFrame2.totalList[j].get())/tempTotal))
-        myFrame2.PercList[j].configure(state='disabled')
-        myFrame2.AgePercList.append(int(myFrame2.totalList[j].get())/tempTotal)
-        
 def regSelected(event):
     e9.configure(state='normal')
-    e9.delete(0,"end")
-
+    #e9.insert(0, len(regDict[startIndex]))
+    sv1.set(regCounter[regCombo.current()])
+    #e9.insert(0, regCounter[startIndex])
+    e9.configure(state='disabled')
+    
     myFrame3.RegPercList=[]
+    myFrame3.regArray = []
 
     for widget in myFrame3.winfo_children():
         widget.destroy()
 
-    Label(myFrame3, text="Region Label").grid(row=0,column=1)
-    Label(myFrame3, text="Region Percent").grid(row=0,column=2)
-    #BC Breaks variable set
-    rvar1 = IntVar()
-    Checkbutton(myFrame3, text="BC breaks", variable=rvar1, command=checkBCBreak).grid(row=0, column=5, sticky=W)       
-    #print (rvar1.get())
+    CustTK.CTkLabel(myFrame3, text="Region Label").grid(row=0,column=1)
+    CustTK.CTkLabel(myFrame3, text="Region Percent").grid(row=0,column=2)
 
-    if not(regCombo.current() == 6):
+    if not(regCombo.current() == 10):
         startIndex = regCombo.current()
-        if rvar1.get() == 0:
-            startIndex = regCombo.current()
-        else:
-            startIndex = regCombo.current()+6
-
-        e9.insert(0, len(regDict[startIndex]))
-        e9.configure(state='disabled')
         
         for x in range(len(regDict[startIndex])):
-            reg_entry = Entry(myFrame3)
-            Label(myFrame3, text=str((regDict[startIndex])[x])).grid(row=x+1,column=1)
-            reg_entry.grid(row=x+1, column=2, pady=10, padx=5)
-            reg_entry.insert(0, ((regPerc[startIndex])[x])) 
+            myFrame3.reg_entry = CustTK.CTkEntry(myFrame3)
+            CustTK.CTkLabel(myFrame3, text=str((regDict[startIndex])[x])).grid(row=x+1,column=1)
+            myFrame3.reg_entry.grid(row=x+1, column=2, pady=10, padx=5)
+            myFrame3.reg_entry.insert(0, ((regPerc[startIndex])[x])) 
+            myFrame3.regArray.append(myFrame3.reg_entry)
             myFrame3.RegPercList.append((regPerc[startIndex])[x])
     else:
-        e9.insert(0, 6)
-    frame3Button = Button(myFrame3, text="Save Region Settings", command=calcReg)
-    frame3Button.grid(row=0,column=10, sticky=E)  
-
-#Refresh button to check if 'bc breaks' checked off
-#myRefresh = Button(myFrame3, text="REFRESH", command=regSelected)
-#myRefresh.grid(sticky=E)
+        sv1.set(4)
+        e9.configure(state='normal')
 
 #REGION SETTINGS
 REGOPTIONS = [
     "SELECT ONE",
-    "INCL EN QC + FR QC",
+    "INCL EN/FR QC",
     "EXCL FR QC",
     "EXCL EN QC",
     "EXCL QC",
+    "INCL EN/FR QC (BC)",
+    "EXCL FR QC (BC)",
+    "EXCL EN QC (BC)",
+    "EXCL QC (BC)",
     "USA REGION",
-    "Custom"
+    "Custom"    
 ]
 
-regCombo = ttk.Combobox(myFrame1,value=REGOPTIONS)
+regCombo = ttk.Combobox(myFrame1,value=REGOPTIONS, justify=CENTER)
 regCombo.current(0)
 regCombo.bind("<<ComboboxSelected>>", regSelected)
 regCombo.grid(row=4,column=6, sticky=W)
@@ -417,7 +496,6 @@ def calcAge():
     #myFrame2.totalList[0].insert(0, ageCensus[int(myFrame2.lowRange[0].get())])
     
     tempTotal = 0
-    
     myFrame2.AgePercList = []
 
     #This loop will compile and insert the 'total population' within each age range and insert it into the total in range column
@@ -438,11 +516,17 @@ def calcAge():
         myFrame2.PercList[j].configure(state='disabled')
         myFrame2.AgePercList.append(int(myFrame2.totalList[j].get())/tempTotal)
         
+def validateAge(P):
+    if len(P)== 0 or len(P) < 3 and P.isdigit():
+        return True
+    else:
+        return False
 
 def ageSelected(event): 
     e8.configure(state='normal')
-    e8.delete(0,"end")
-    e8.insert(0, int(ageCombo.current()))
+    #e8.delete(0,"end")
+    #e8.insert(0, int(ageCombo.current()))
+    sv3.set(int(ageCombo.current()))
     e8.configure(state='disabled')
     
     for widget in myFrame2.winfo_children():
@@ -452,17 +536,18 @@ def ageSelected(event):
     myFrame2.highRange = []
     myFrame2.totalList = []
     myFrame2.PercList = []
-    
-    Label(myFrame2, text="Age Range").grid(row=0,column=2,columnspan=2)
-    Label(myFrame2, text="Total in range").grid(row=0,column=4)
-    Label(myFrame2, text="Age Percent").grid(row=0,column=5)  
+    vcmdAgeInt = (myFrame2.register(validateAge),'%P')
+
+    CustTK.CTkLabel(myFrame2, text="Age Range").grid(row=0,column=2,columnspan=2)
+    CustTK.CTkLabel(myFrame2, text="Total in range").grid(row=0,column=4)
+    CustTK.CTkLabel(myFrame2, text="Age Percent").grid(row=0,column=5)  
 
     for x in range(int(ageCombo.get())):
-        age_entry1 = Entry(myFrame2,width=5)
-        age_entry2 = Entry(myFrame2,width=5)
-        age_count = Entry(myFrame2) 
-        age_perc = Entry(myFrame2)
-        Label(myFrame2, text="Age " + str(x+1)).grid(row=x+1,column=1)
+        age_entry1 = CustTK.CTkEntry(myFrame2, width=75, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdAgeInt))
+        age_entry2 = CustTK.CTkEntry(myFrame2, width=75, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdAgeInt))
+        age_count = CustTK.CTkEntry(myFrame2) 
+        age_perc = CustTK.CTkEntry(myFrame2)
+        CustTK.CTkLabel(myFrame2, text="Age " + str(x+1)).grid(row=x+1,column=1)
         age_entry1.grid(row=x+1, column=2, pady=10, padx=5)
         age_entry2.grid(row=x+1, column=3, pady=10, padx=5)
         age_count.grid(row=x+1, column=4, pady=10, padx=5)
@@ -475,7 +560,7 @@ def ageSelected(event):
         myFrame2.PercList.append(age_perc)
         
     
-    frame2Button = Button(myFrame2, text="Calculate Age Percentages/Save Settings", command=calcAge)
+    frame2Button = CustTK.CTkButton(myFrame2, text="Calculate Age Percentages/Save Settings", command=calcAge)
     frame2Button.grid(row=0,column=6, sticky=E)  
     
 
@@ -602,7 +687,7 @@ ageCensus = {
     99: 3990
 }
 
-ageCombo = ttk.Combobox(myFrame1,value=AGEOPTIONS)
+ageCombo = ttk.Combobox(myFrame1,value=AGEOPTIONS, justify=CENTER)
 ageCombo.current(0)
 ageCombo.bind("<<ComboboxSelected>>", ageSelected)
 ageCombo.grid(row=3,column=6, sticky=W)
@@ -648,9 +733,12 @@ def generateForm():
     ageVar = int(var2.get())
     regVar = int(var3.get())
     interlockVar = int(var4.get())
+    cellVar = int(cellBalType.get())
+    cellCount = int(e_cb1.get())
     genCount = int(e7.get())
     ageCount = int(e8.get())
     regCount = int(e9.get())    
+    cellQualed = int(var13.get())
     #Gender
     if (genVar == 1):
         worksheet1 = workbook.add_worksheet('Gender Quota')
@@ -664,7 +752,6 @@ def generateForm():
 
             worksheet1.write('A' + str(count+2), e1.get() + str(count+1))
             worksheet1.write('B' + str(count+2), GenderQuotaCalc(count))
-        print (myFrame4.GenPercList)
         print (myFrame4.genArray)
     #Age
     if (ageVar == 1):
@@ -688,7 +775,7 @@ def generateForm():
         for count, eachRow in enumerate(range(indice+2,indice+2+regCount)):
             worksheet.write('A' + str(eachRow), e3.get() + str(count+1))    
             worksheet.write('B' + str(eachRow), e6.get() + ".r" + str(count+1))
-            if not(regCombo.current() == 6):
+            if not(regCombo.current() == 10):
                 worksheet.write('C' + str(eachRow), (regDict[regCombo.current()])[count]) 
             else:
                 worksheet.write('C' + str(eachRow), myFrame3.entries[count].get()) 
@@ -696,7 +783,109 @@ def generateForm():
             worksheet3.write('A' + str(count+2), e3.get() + str(count+1))    
             worksheet3.write('B' + str(count+2), RegQuotaCalc(count))    
         indice = indice + regCount
-        print (myFrame3.RegPercList)
+        print (myFrame3.regArray)
+    
+    #Cross Table cell balance MONADIC
+    if (cellVar == 1):
+        worksheet5 = workbook.add_worksheet('CELL BALANCE')
+        worksheet5.write('A1', '#=CELL BALANCE')
+        cbIndice = cellCount
+        if cellQualed==1:
+            worksheet5.write('B1', '#')
+        rowLabels = e_cb4.get().split(",")
+        
+        #writes the defines for both cell/cellplus depending on if cells have qualifications
+        for count, eachRow in enumerate(range(indice+2,indice+2+cellCount)):
+            worksheet.write('A' + str(eachRow), "CELL" + str(count+1)) 
+
+            if cellQualed == 1:
+                worksheet.write('B' + str(eachRow), e_cb3.get() + "." + rowLabels[count])
+                worksheet.write('A' + str(eachRow+cellCount), "CELLplus" + str(count+1))
+                worksheet.write('B' + str(eachRow+cellCount), "plus")
+                worksheet.write('C' + str(eachRow+cellCount), "CELL " + str(count+1)) 
+            else:
+                worksheet.write('B' + str(eachRow), "plus")
+            worksheet.write('C' + str(eachRow), "CELL " + str(count+1)) 
+        
+        #writes the actual cell balance and all balancing factors       
+        for count,eachRow in enumerate(range(1,cellCount+1)):
+            worksheet5.write('A' + str(count+2), "CELL" + str(eachRow))
+            if cellQualed == 1:
+                worksheet5.write('B' + str(count+2), "CELLplus" + str(eachRow))    
+                worksheet5.write('C' + str(count+2), "inf")
+            else:
+                worksheet5.write('B' + str(count+2), "inf")
+        
+        #writes cell balanced by region
+        if (regBalance2.get() == 1):
+            for count,eachRow in enumerate(range(1,cellCount+1)):
+                worksheet5.write('B' + str(4+cbIndice+(regCount*count)), "CELL" + str(eachRow))
+                worksheet5.write('C' + str(4+cbIndice+(regCount*count)), "CELLplus" + str(eachRow))
+                for rCount, eachRow1 in enumerate(range(1,regCount+1)):
+                    worksheet5.write('A' + str(rCount+4+cbIndice+(regCount*count)), e3.get() + str(eachRow1))   
+                    if cellQualed == 1: 
+                        worksheet5.write('D' + str(rCount+4+cbIndice+(regCount*count)), "inf")
+                    else:
+                        worksheet5.write('C' + str(rCount+4+cbIndice+(regCount*count)), "inf")
+            worksheet5.write('A' + str(3+cbIndice), '#=Cell x Region')
+            worksheet5.write('B' + str(3+cbIndice), '#')
+            if var13.get() == 1:
+                worksheet5.write('C' + str(3+cbIndice), '#')
+            cbIndice = cbIndice + (regCount*cellCount) + (regBalance2.get()*2)
+
+        #writes cell balanced by age
+        if (ageBalance2.get() == 1):
+            for count,eachRow in enumerate(range(1,cellCount+1)):
+                worksheet5.write('B' + str(4+cbIndice+(ageCount*count)), "CELL" + str(eachRow))
+                worksheet5.write('C' + str(4+cbIndice+(ageCount*count)), "CELLplus" + str(eachRow))
+                for aCount, eachRow1 in enumerate(range(1,ageCount+1)):
+                    worksheet5.write('A' + str(aCount+4+cbIndice+(ageCount*count)), e2.get() + str(eachRow1))   
+                    if cellQualed == 1: 
+                        worksheet5.write('D' + str(aCount+4+cbIndice+(ageCount*count)), "inf")
+                    else:
+                        worksheet5.write('C' + str(aCount+4+cbIndice+(ageCount*count)), "inf")
+            worksheet5.write('A' + str(3+cbIndice), '#=Cell x Age')
+            worksheet5.write('B' + str(3+cbIndice), '#')
+            if var13.get() == 1:
+                worksheet5.write('C' + str(3+cbIndice), '#')
+            cbIndice = cbIndice + (ageCount*cellCount) + (ageBalance2.get()*2)
+
+
+        #writes cell balanced by age
+        if (genBalance2.get() == 1):
+            for count,eachRow in enumerate(range(1,cellCount+1)):
+                worksheet5.write('B' + str(4+cbIndice+(genCount*count)), "CELL" + str(eachRow))
+                worksheet5.write('C' + str(4+cbIndice+(genCount*count)), "CELLplus" + str(eachRow))
+                for gCount, eachRow1 in enumerate(range(1,genCount+1)):
+                    worksheet5.write('A' + str(gCount+4+cbIndice+(genCount*count)), e1.get() + str(eachRow1))   
+                    if cellQualed == 1: 
+                        worksheet5.write('D' + str(gCount+4+cbIndice+(genCount*count)), "inf")
+                    else:
+                        worksheet5.write('C' + str(gCount+4+cbIndice+(genCount*count)), "inf")
+            worksheet5.write('A' + str(3+cbIndice), '#=Cell x Age')
+            worksheet5.write('B' + str(3+cbIndice), '#')
+            if var13.get() == 1:
+                worksheet5.write('C' + str(3+cbIndice), '#')
+            cbIndice = cbIndice + (genCount*cellCount) + (genBalance2.get()*2)
+            
+        indice = indice + cellCount
+        #print (myFrame3.regArray)
+
+    #Legacy cell balance MONADIC
+    if (cellVar == 2):
+        worksheet5 = workbook.add_worksheet('CELL BALANCE')
+        worksheet5.write('A1', '#=CELL BALANCE')
+        for count, eachRow in enumerate(range(2,2+regCount*genCount*ageCount*cellCount,genCount*ageCount*cellCount)):
+            worksheet5.write('A' + str(eachRow), e3.get() + str(count+1)) 
+            for count2, eachRow2 in enumerate(range(2+count*genCount*ageCount*cellCount,2+(count+1)*genCount*ageCount*cellCount,genCount*cellCount)):
+                worksheet5.write('B' + str(eachRow2), e2.get() + str(count2+1))             
+                for count3, eachRow3 in enumerate(range(2+count*genCount*cellCount,2+(count+1)*genCount*cellCount,cellCount)):
+                    worksheet5.write('C' + str(eachRow3), e1.get() + str(count3+1))
+                    for count4, eachRow4 in enumerate(range(count3*cellCount,((count3+1)*cellCount))):
+                        print (2+(count*ageCount*genCount*cellCount)+eachRow4)
+                        worksheet5.write('D' + str(2+(count*ageCount*genCount*cellCount)+eachRow4), "CELL" + str(count4+1))
+
+    #Interlock Quota
     if (interlockVar == 1 and (genVar+ageVar+regVar == 3)):
         worksheet4 = workbook.add_worksheet('Interlock Quota')
         worksheet4.write('A1', '#=Interlock Quota')    
@@ -743,9 +932,9 @@ def doubleInterlock(workbook, inter1, inter2,variable1,variable2,perclist1,percl
 #Following 3 functions calculates the gender, age and region hard quotas/soft qutoas respectively, also will store the % of each in an array for interlock quota calulation
 def GenderQuotaCalc(count):
     if int(var11.get()==1):
-        return round(float(myFrame4.GenPercList[count])*float(e10.get()),None)
+        return round(float(myFrame4.genArray[count].get())*float(e10.get()),None)
     else:
-        return round(float(myFrame4.GenPercList[count])*float(e10.get()),None)*10
+        return round(float(myFrame4.genArray[count].get())*float(e10.get()),None)*10
 
 def AgeQuotaCalc(count):
     if int(var12.get()==1):
@@ -755,13 +944,13 @@ def AgeQuotaCalc(count):
 
 def RegQuotaCalc(count):
     if int(var13.get()==1):
-        return round(float(myFrame3.RegPercList[count])*float(e10.get()),None)
+        return round(float(myFrame3.regArray[count].get())*float(e10.get()),None)
     else:
-        return round(float(myFrame3.RegPercList[count])*float(e10.get()),None)*10
+        return round(float(myFrame3.regArray[count].get())*float(e10.get()),None)*10
 
 # def calcInterlock(array1,array2,array3):
 #     if array1
-mySubmit = Button(myFrame1, text="Generate Form", command=generateForm)
-mySubmit.grid(row=50, sticky=S, column=2)
+mySubmit = CustTK.CTkButton(myFrame1, text="Generate Form", command=generateForm)
+mySubmit.grid(row=50, sticky=S, column=40)
 
 window.mainloop()
