@@ -5,6 +5,7 @@ import customtkinter as CustTK
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 
 CustTK.set_appearance_mode("System")  # Modes: system (default), light, dark
 CustTK.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
@@ -49,33 +50,9 @@ CustTK.CTkLabel(myFrame1, text="TOTAL N: ").grid(row=1, column=4)
 # var8 = IntVar()
 # intButton2 = CustTK.CTkCheckBox(myFrame1, state=DISABLED, text="Interlock 2", variable=var8)
 # intButton2.grid(row=5, column=8, sticky=W)
-
-is_on=True
-#defined function to enable 2nd set of interlocks when 1st interlock button clicked
-# def enableInt():
-#     global is_on
-
-#     if is_on:
-#         genButton2.config(state=NORMAL)
-#         ageButton2.config(state=NORMAL)
-#         regButton2.config(state=NORMAL)
-#         intButton2.config(state=NORMAL)       
-#         is_on=False
-#     else:
-#         genButton2.deselect()
-#         ageButton2.deselect()
-#         regButton2.deselect()
-#         intButton2.deselect()
-
-#         genButton2.config(state=DISABLED)
-#         ageButton2.config(state=DISABLED)
-#         regButton2.config(state=DISABLED)
-#         intButton2.config(state=DISABLED)
-#         is_on=True       
-
+is_on = False
 def disableHQ():
     global is_on
-
     if is_on:
         genHQ.deselect()
         ageHQ.deselect()
@@ -153,33 +130,45 @@ vcmdInt = (myFrame1.register(validateInt10),'%P')
 #This function ensures only floats with leading 0s/periods can be typed into the percentage fields
 def validateFloat(P):
     text = P  
-    print('text:', text)
-
     parts = text.split('.')
     parts_number = len(parts)
 
     if parts_number > 2:
         #print('too many dots')
         return False
-
     if parts_number > 1 and parts[1]: # don't check empty string
         if not parts[1].isdecimal() or len(parts[1]) > 5:
             #print('wrong second part')
             return False
-
     if parts_number > 0 and parts[0]: # don't check empty string
         if not parts[0].isdecimal() or len(parts[0]) > 1 or ('0' not in parts[0]):
             #print('wrong first part')
             return False
-
     return True
+
+def validateEntry(event):
+    n=e10.get()
+    if len(n) == 0:
+        mainMsg.config(text="TOTAL N cannot be empty!")
+    else:
+        try:
+            if len(n) < 2:
+                mainMsg.config(text="Minmum double digit N-size!")
+            else:
+                mainMsg.config(text="")
+        except Exception as ep:
+            messagebox.showerror('ERROR',ep)
 
 e4 = CustTK.CTkEntry(myFrame1, width=125, border_width=2, corner_radius=5)
 e5 = CustTK.CTkEntry(myFrame1, width=125, border_width=2, corner_radius=5)
 e6 = CustTK.CTkEntry(myFrame1, width=125, border_width=2, corner_radius=5)
 e10 = CustTK.CTkEntry(myFrame1, width=150, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdInt))
+mainMsg = Label(myFrame1, text="", fg="#FF0000", font="Helvetica 10 bold")
+mainMsg.grid(row=1,column=2,columnspan=2)
 
 e10.grid(row=1,column=5)
+e10.bind('<FocusOut>',validateEntry)
+
 e4.grid(row=2,column=5)
 e5.grid(row=3,column=5)
 e6.grid(row=4,column=5)
@@ -210,15 +199,14 @@ e9.configure(state='disabled')
 
 #Begins some code to setup the CELL BALANCE FIELDS
 #Main page - Checkbox buttons to indicate which demos shoudl be balanced for in cell balance
-
-var10 = IntVar()
-genBalance2 = CustTK.CTkCheckBox(myFrame1, text="Gender", variable=var10)
+var15 = IntVar()
+genBalance2 = CustTK.CTkCheckBox(myFrame1, text="Gender", variable=var15)
 genBalance2.grid(row=7, column=2, sticky=W, pady=2)
-var11 = IntVar()
-ageBalance2 = CustTK.CTkCheckBox(myFrame1, text="Age", variable=var11)
+var16 = IntVar()
+ageBalance2 = CustTK.CTkCheckBox(myFrame1, text="Age", variable=var16)
 ageBalance2.grid(row=8, column=2, sticky=W, pady=2)
-var12 = IntVar()
-regBalance2 = CustTK.CTkCheckBox(myFrame1, text="Region", variable=var12)
+var17 = IntVar()
+regBalance2 = CustTK.CTkCheckBox(myFrame1, text="Region", variable=var17)
 regBalance2.grid(row=9, column=2, sticky=W, pady=2)
 
 
@@ -231,6 +219,20 @@ radiobutton_2 = CustTK.CTkRadioButton(myFrame1, text="Legacy Method",command=rad
 radiobutton_1.grid(row=7, column=1, sticky=W, pady=2, padx=10)
 radiobutton_2.grid(row=8, column=1, sticky=W, pady=2, padx=10)
 
+#Function to check Num Picks entered if Num cells Entered
+def validateEntry2(event):
+    n=e_cb2.get()
+    if len(n) == 0 and int(e_cb1.get()) >= 1:
+        pickMsg.config(text="Num Picks cannot be empty!")
+    else:
+        try:
+            if int(n) >= int(e_cb1.get()):
+                pickMsg.config(text="Num Picks cannot be greater/equal to Num Cells")
+            else:
+                pickMsg.config(text="")
+        except Exception as ep:
+            messagebox.showerror('ERROR',ep)
+
 #Entry fields for number of cells
 CustTK.CTkLabel(myFrame1, text="Num Cells").grid(row=7, column=0)
 e_cb1 = CustTK.CTkEntry(myFrame1, width=50, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdInt))
@@ -238,6 +240,9 @@ e_cb1.grid(row=8,column=0)
 CustTK.CTkLabel(myFrame1, text="Num Picks").grid(row=9, column=0)
 e_cb2 = CustTK.CTkEntry(myFrame1, width=50, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdInt))
 e_cb2.grid(row=10,column=0)
+e_cb2.bind('<FocusOut>',validateEntry2)
+pickMsg = Label(myFrame1, text="", fg="#FF0000", font="Helvetica 10 bold")
+pickMsg.grid(row=12,column=0,columnspan=2)
 
 #cell qualifications
 CustTK.CTkLabel(myFrame1, text="Qual Variable, only one is needed/allowed (i.e., cellQual)").grid(row=7, column=4,columnspan=4)
@@ -252,17 +257,23 @@ e_cb5.grid(row=12,column=4,columnspan=4,padx=20)
 
 
 #defined function to enable cell qualification fields
+is_on2 = False
 def enableCQ():
-    global is_on
+    global is_on2
 
-    if is_on:
+    if is_on2:
         e_cb3.config(state=NORMAL)
         e_cb4.config(state=NORMAL)     
-        is_on=False
+        is_on2=False
     else:
+        e_cb3.delete(0,END)
+        e_cb3.insert(0,"")
+        e_cb4.delete(0,END)
+        e_cb4.insert(0,"")
         e_cb3.config(state=DISABLED)
         e_cb4.config(state=DISABLED)
-        is_on=True       
+
+        is_on2=True       
 #checkbox to indicate if cells are qualified for or if completely random
 var13 = IntVar()
 qualBalance = CustTK.CTkCheckBox(myFrame1, text="Cell Qualifications?", variable=var13, command=enableCQ)
@@ -522,6 +533,23 @@ def validateAge(P):
     else:
         return False
 
+def validateAgeEntry(event):
+    for x in range(int(ageCombo.get())):
+        if len(str(myFrame2.highRange[x].get())) == 0:
+            myFrame2.errorList[x].config(text="AGE cannot be empty!")
+        else:
+            try:
+                if int(myFrame2.lowRange[x].get()) >= int(myFrame2.highRange[x].get()):
+                    myFrame2.errorList[x].config(text="Age range must go from low to high (I.e, 18-24).")
+                elif not(x==0) and int(myFrame2.lowRange[x].get()) <= int(myFrame2.highRange[x-1].get()):
+                    myFrame2.errorList[x].config(text="No overlapping age ranges!")
+                elif not(x==0) and (int(myFrame2.lowRange[x].get()) - int(myFrame2.highRange[x-1].get()))>= 2:
+                    myFrame2.errorList[x].config(text="Careful, there are ages missing.")                    
+                else:
+                    myFrame2.errorList[x].config(text="")
+            except Exception as ep:
+                messagebox.showerror('ERROR',ep)
+
 def ageSelected(event): 
     e8.configure(state='normal')
     #e8.delete(0,"end")
@@ -534,6 +562,7 @@ def ageSelected(event):
     
     myFrame2.lowRange = []
     myFrame2.highRange = []
+    myFrame2.errorList = []
     myFrame2.totalList = []
     myFrame2.PercList = []
     vcmdAgeInt = (myFrame2.register(validateAge),'%P')
@@ -543,19 +572,24 @@ def ageSelected(event):
     CustTK.CTkLabel(myFrame2, text="Age Percent").grid(row=0,column=5)  
 
     for x in range(int(ageCombo.get())):
-        age_entry1 = CustTK.CTkEntry(myFrame2, width=75, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdAgeInt))
-        age_entry2 = CustTK.CTkEntry(myFrame2, width=75, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdAgeInt))
+        myFrame2.age_entry1 = CustTK.CTkEntry(myFrame2, width=75, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdAgeInt))
+        myFrame2.age_entry1.bind('<FocusOut>',validateAgeEntry)
+        myFrame2.age_entry2 = CustTK.CTkEntry(myFrame2, width=75, border_width=2, corner_radius=5, validate="key", validatecommand=(vcmdAgeInt))
+        myFrame2.age_entry2.bind('<FocusOut>',validateAgeEntry)
+        myFrame2.ageMsg = Label(myFrame2, text="", fg="#FF0000", font="Helvetica 10 bold")
+        myFrame2.ageMsg.grid(row=x+1,column=6,columnspan=2)
         age_count = CustTK.CTkEntry(myFrame2) 
         age_perc = CustTK.CTkEntry(myFrame2)
         CustTK.CTkLabel(myFrame2, text="Age " + str(x+1)).grid(row=x+1,column=1)
-        age_entry1.grid(row=x+1, column=2, pady=10, padx=5)
-        age_entry2.grid(row=x+1, column=3, pady=10, padx=5)
+        myFrame2.age_entry1.grid(row=x+1, column=2, pady=10, padx=5)
+        myFrame2.age_entry2.grid(row=x+1, column=3, pady=10, padx=5)
         age_count.grid(row=x+1, column=4, pady=10, padx=5)
         age_count.configure(state='disabled')
         age_perc.grid(row=x+1, column=5, pady=10, padx=5)
         age_perc.configure(state='disabled')
-        myFrame2.lowRange.append(age_entry1)
-        myFrame2.highRange.append(age_entry2)
+        myFrame2.lowRange.append(myFrame2.age_entry1)
+        myFrame2.highRange.append(myFrame2.age_entry2)
+        myFrame2.errorList.append(myFrame2.ageMsg)
         myFrame2.totalList.append(age_count)
         myFrame2.PercList.append(age_perc)
         
@@ -710,7 +744,7 @@ def generateForm():
     #Calculate total number of variables in order to accurately place them in their respective rows.
     indice = 0
     
-    workbook = xlsxwriter.Workbook('quota.xls')
+    workbook = xlsxwriter.Workbook('quota.xlsx')
     worksheet = workbook.add_worksheet('Defines')
 
     #sampleSize = input("What is the sample size of this study including any oversample: ")
@@ -723,22 +757,25 @@ def generateForm():
     # data via the write() method.
     worksheet.write('A1', 'Total')
     worksheet.write('B1', '1')
-    # if (genVar == 1):
-    #     indice = indice + genCount
-    # if (ageVar == 1):
-    #     indice = indice + ageCount 
-    # if (regVar == 1):
-    #     indice = indice + regCount
+
     genVar = int(var1.get())
     ageVar = int(var2.get())
     regVar = int(var3.get())
+    genCB = int(var15.get())
+    ageCB = int(var16.get())
+    regCB = int(var17.get())
     interlockVar = int(var4.get())
     cellVar = int(cellBalType.get())
-    cellCount = int(e_cb1.get())
     genCount = int(e7.get())
     ageCount = int(e8.get())
     regCount = int(e9.get())    
     cellQualed = int(var13.get())
+
+    #Total Sheet
+    worksheet0 = workbook.add_worksheet('Total Quota')
+    worksheet0.write('A1', '#=Total Quota')
+    worksheet0.write('A2', 'Total')
+    worksheet0.write('B2', 'inf')      
     #Gender
     if (genVar == 1):
         worksheet1 = workbook.add_worksheet('Gender Quota')
@@ -786,7 +823,8 @@ def generateForm():
         print (myFrame3.regArray)
     
     #Cross Table cell balance MONADIC
-    if (cellVar == 1):
+    if (cellVar == 1) and int(e_cb2.get()) == 1:
+        cellCount = int(e_cb1.get())
         worksheet5 = workbook.add_worksheet('CELL BALANCE')
         worksheet5.write('A1', '#=CELL BALANCE')
         cbIndice = cellCount
@@ -862,7 +900,7 @@ def generateForm():
                         worksheet5.write('D' + str(gCount+4+cbIndice+(genCount*count)), "inf")
                     else:
                         worksheet5.write('C' + str(gCount+4+cbIndice+(genCount*count)), "inf")
-            worksheet5.write('A' + str(3+cbIndice), '#=Cell x Age')
+            worksheet5.write('A' + str(3+cbIndice), '#=Cell x Gender')
             worksheet5.write('B' + str(3+cbIndice), '#')
             if var13.get() == 1:
                 worksheet5.write('C' + str(3+cbIndice), '#')
@@ -871,20 +909,190 @@ def generateForm():
         indice = indice + cellCount
         #print (myFrame3.regArray)
 
+    #Cross Table cell balance MULTIPLE PICKS
+    if (cellVar == 1) and int(e_cb2.get()) >= 2:
+        cellCount = int(e_cb1.get())
+        workBookArray = []
+        cellDefineArray = []
+        cellDefineStr = ""
+
+        for eachSheet in range(int(e_cb2.get())):
+            workBookArray.append(workbook.add_worksheet('CELL PICK ' + str(eachSheet+1)))
+
+            workBookArray[eachSheet].write('A1', '#=CELL PICK ' + str(eachSheet+1))
+            cbIndice = cellCount
+            if (cellQualed==1) or eachSheet > 0:
+                workBookArray[eachSheet].write('B1', '#')
+            rowLabels = e_cb4.get().split(",")
+            
+            #writes the defines for both cell/cellplus depending on if cells have qualifications
+            for count, eachRow in enumerate(range(indice+2,indice+2+cellCount)):
+                print (cellDefineArray)
+
+                if (cellQualed == 1) and (eachSheet == 0):
+                    worksheet.write('A' + str(eachRow), "CELL_" + str(eachSheet+1) + "_" + str(count+1))
+                    worksheet.write('B' + str(eachRow), e_cb3.get() + "." + rowLabels[count])
+                    worksheet.write('A' + str(eachRow+cellCount), "CELLplus_" + str(eachSheet+1) + "_" + str(count+1))
+                    worksheet.write('B' + str(eachRow+cellCount), "plus")
+                    worksheet.write('C' + str(eachRow+cellCount), "CELL " + str(count+1)) 
+                elif (cellQualed == 1) and not(eachSheet == 0):
+                    worksheet.write('A' + str(eachRow), "CELL_" + str(eachSheet+1) + "_" + str(count+1))
+                    print (count+(cellCount*(eachSheet-1)))
+                    if eachSheet == 1:
+                        cellDefineStr = "Pick" + str(eachSheet) + ".r" + str(count+1)
+                    elif eachSheet > 1:
+                        cellDefineStr =cellDefineArray[count+(cellCount*(eachSheet-2))] + " or "  + "Pick" + str(eachSheet) + ".r" + str(count+1)
+                    cellDefineArray.append(cellDefineStr)
+                    worksheet.write('B' + str(eachRow), e_cb3.get() + "." + rowLabels[count] + " and not(" + str(cellDefineArray[count+(cellCount*(eachSheet-1))]) + ")")
+                    worksheet.write('A' + str(eachRow+cellCount), "CELLplus_" + str(eachSheet+1) + "_" + str(count+1))
+                    worksheet.write('B' + str(eachRow+cellCount), "plus")
+                    worksheet.write('C' + str(eachRow+cellCount), "CELL " + str(count+1)) 
+                elif not(cellQualed == 1) and (eachSheet == 0):
+                    worksheet.write('A' + str(eachRow), "CELLplus_" + str(eachSheet+1) + "_" + str(count+1))
+                    worksheet.write('B' + str(eachRow), "plus")
+                elif not(cellQualed == 1) and not(eachSheet == 0):
+                    worksheet.write('A' + str(eachRow), "CELL_" + str(eachSheet+1) + "_" + str(count+1))
+                    worksheet.write('B' + str(eachRow), "plus")
+                    print (count+(cellCount*(eachSheet-1)))
+                    if eachSheet == 1:
+                        cellDefineStr = "Pick" + str(eachSheet) + ".r" + str(count+1)
+                    elif eachSheet > 1:
+                        cellDefineStr =cellDefineArray[count+(cellCount*(eachSheet-2))] + " or "  + "Pick" + str(eachSheet) + ".r" + str(count+1)
+                    cellDefineArray.append(cellDefineStr)
+                    worksheet.write('B' + str(eachRow), "not(" + str(cellDefineArray[count+(cellCount*(eachSheet-1))]) + ")")
+                    worksheet.write('A' + str(eachRow+cellCount), "CELLplus_" + str(eachSheet+1) + "_" + str(count+1))
+                    worksheet.write('B' + str(eachRow+cellCount), "plus")
+                    worksheet.write('C' + str(eachRow+cellCount), "CELL " + str(count+1))  
+
+                worksheet.write('C' + str(eachRow), "CELL " + str(count+1)) 
+            if not(cellQualed == 1) and (eachSheet == 0):
+                indice = indice + cellCount 
+            else:
+                indice = indice + cellCount + cellCount
+
+            #writes the actual cell balance and all balancing factors       
+            for count,eachRow in enumerate(range(1,cellCount+1)):
+                if (not(cellQualed==1) and eachSheet > 0):
+                    workBookArray[eachSheet].write('A' + str(count+2), "CELL_" + str(eachSheet+1) + "_" + str(eachRow))
+                else:
+                    workBookArray[eachSheet].write('A' + str(count+2), "CELLplus_" + str(eachSheet+1) + "_" + str(eachRow))
+                if not(eachSheet == 0) or cellQualed == 1:
+                    workBookArray[eachSheet].write('B' + str(count+2), "CELLplus_" + str(eachSheet+1) + "_" + str(eachRow))    
+                    workBookArray[eachSheet].write('C' + str(count+2), "inf")
+                else:
+                    workBookArray[eachSheet].write('B' + str(count+2), "inf")
+            
+            #writes cell balanced by region
+            if (regBalance2.get() == 1):
+                for count,eachRow in enumerate(range(1,cellCount+1)):
+                    if (not(cellQualed==1) and eachSheet > 0):
+                        workBookArray[eachSheet].write('B' + str(4+cbIndice+(regCount*count)), "CELL_" + str(eachSheet+1) + "_" + str(eachRow))
+                    else:
+                        workBookArray[eachSheet].write('B' + str(4+cbIndice+(regCount*count)), "CELLplus_" + str(eachSheet+1) + "_" + str(eachRow))
+                    workBookArray[eachSheet].write('C' + str(4+cbIndice+(regCount*count)), "CELLplus_" + str(eachSheet+1) + "_" + str(eachRow))
+                    for rCount, eachRow1 in enumerate(range(1,regCount+1)):
+                        workBookArray[eachSheet].write('A' + str(rCount+4+cbIndice+(regCount*count)), e3.get() + str(eachRow1))   
+                        if cellQualed == 1 or (not(cellQualed == 1) and eachSheet > 0): 
+                            workBookArray[eachSheet].write('D' + str(rCount+4+cbIndice+(regCount*count)), "inf")
+                        else:
+                            workBookArray[eachSheet].write('C' + str(rCount+4+cbIndice+(regCount*count)), "inf")
+                workBookArray[eachSheet].write('A' + str(3+cbIndice), '#=Cell ' + str(eachSheet+1) + ' x Region')
+                workBookArray[eachSheet].write('B' + str(3+cbIndice), '#')
+                if var13.get() == 1:
+                    workBookArray[eachSheet].write('C' + str(3+cbIndice), '#')
+                cbIndice = cbIndice + (regCount*cellCount) + (regBalance2.get()*2)
+
+            #writes cell balanced by age
+            if (ageBalance2.get() == 1):
+                for count,eachRow in enumerate(range(1,cellCount+1)):
+                    if (not(cellQualed==1) and eachSheet > 0):
+                        workBookArray[eachSheet].write('B' + str(4+cbIndice+(ageCount*count)), "CELL_" + str(eachSheet+1) + "_" + str(eachRow))
+                    else:
+                        workBookArray[eachSheet].write('B' + str(4+cbIndice+(ageCount*count)), "CELLplus_" + str(eachSheet+1) + "_" + str(eachRow))
+                    workBookArray[eachSheet].write('C' + str(4+cbIndice+(ageCount*count)), "CELLplus_" + str(eachSheet+1) + "_" + str(eachRow))
+                    for aCount, eachRow1 in enumerate(range(1,ageCount+1)):
+                        workBookArray[eachSheet].write('A' + str(aCount+4+cbIndice+(ageCount*count)), e2.get() + str(eachRow1))   
+                        if cellQualed == 1 or (not(cellQualed == 1) and eachSheet > 0): 
+                            workBookArray[eachSheet].write('D' + str(aCount+4+cbIndice+(ageCount*count)), "inf")
+                        else:
+                            workBookArray[eachSheet].write('C' + str(aCount+4+cbIndice+(ageCount*count)), "inf")
+                workBookArray[eachSheet].write('A' + str(3+cbIndice), '#=Cell ' + str(eachSheet+1) + ' x Age')
+                workBookArray[eachSheet].write('B' + str(3+cbIndice), '#')
+                if var13.get() == 1:
+                    workBookArray[eachSheet].write('C' + str(3+cbIndice), '#')
+                cbIndice = cbIndice + (ageCount*cellCount) + (ageBalance2.get()*2)
+
+
+            #writes cell balanced by age
+            if (genBalance2.get() == 1):
+                for count,eachRow in enumerate(range(1,cellCount+1)):
+                    if (not(cellQualed==1) and eachSheet > 0):
+                        workBookArray[eachSheet].write('B' + str(4+cbIndice+(genCount*count)), "CELL_" + str(eachSheet+1) + "_" + str(eachRow))
+                    else:
+                        workBookArray[eachSheet].write('B' + str(4+cbIndice+(genCount*count)), "CELLplus_" + str(eachSheet+1) + "_" + str(eachRow))
+                    workBookArray[eachSheet].write('C' + str(4+cbIndice+(genCount*count)), "CELLplus_" + str(eachSheet+1) + "_" + str(eachRow))
+                    for gCount, eachRow1 in enumerate(range(1,genCount+1)):
+                        workBookArray[eachSheet].write('A' + str(gCount+4+cbIndice+(genCount*count)), e1.get() + str(eachRow1))   
+                        if cellQualed == 1 or (not(cellQualed == 1) and eachSheet > 0): 
+                            workBookArray[eachSheet].write('D' + str(gCount+4+cbIndice+(genCount*count)), "inf")
+                        else:
+                            workBookArray[eachSheet].write('C' + str(gCount+4+cbIndice+(genCount*count)), "inf")
+                workBookArray[eachSheet].write('A' + str(3+cbIndice), '#=Cell ' + str(eachSheet+1) + ' x Gender')
+                workBookArray[eachSheet].write('B' + str(3+cbIndice), '#')
+                if var13.get() == 1:
+                    workBookArray[eachSheet].write('C' + str(3+cbIndice), '#')
+                cbIndice = cbIndice + (genCount*cellCount) + (genBalance2.get()*2)
+                
+            
+        #print (myFrame3.regArray)
+
     #Legacy cell balance MONADIC
     if (cellVar == 2):
-        worksheet5 = workbook.add_worksheet('CELL BALANCE')
-        worksheet5.write('A1', '#=CELL BALANCE')
-        for count, eachRow in enumerate(range(2,2+regCount*genCount*ageCount*cellCount,genCount*ageCount*cellCount)):
-            worksheet5.write('A' + str(eachRow), e3.get() + str(count+1)) 
-            for count2, eachRow2 in enumerate(range(2+count*genCount*ageCount*cellCount,2+(count+1)*genCount*ageCount*cellCount,genCount*cellCount)):
-                worksheet5.write('B' + str(eachRow2), e2.get() + str(count2+1))             
-                for count3, eachRow3 in enumerate(range(2+count*genCount*cellCount,2+(count+1)*genCount*cellCount,cellCount)):
-                    worksheet5.write('C' + str(eachRow3), e1.get() + str(count3+1))
-                    for count4, eachRow4 in enumerate(range(count3*cellCount,((count3+1)*cellCount))):
-                        print (2+(count*ageCount*genCount*cellCount)+eachRow4)
-                        worksheet5.write('D' + str(2+(count*ageCount*genCount*cellCount)+eachRow4), "CELL" + str(count4+1))
+        cellCount = int(e_cb1.get())
 
+        #writes the defines for both cell/cellplus depending on if cells have qualifications
+        for count, eachRow in enumerate(range(indice+2,indice+2+cellCount)):
+            worksheet.write('A' + str(eachRow), "CELL" + str(count+1)) 
+
+            if cellQualed == 1:
+                worksheet.write('B' + str(eachRow), e_cb3.get() + "." + rowLabels[count])
+            else:
+                worksheet.write('B' + str(eachRow), "plus")
+            worksheet.write('C' + str(eachRow), "CELL " + str(count+1)) 
+
+        worksheet5 = workbook.add_worksheet('CELL BALANCE')
+        if int(e_cb2.get()) == 1:
+            worksheet5.write('A1', '#=CELL BALANCE')
+        elif int(e_cb2.get()) > 1:
+            worksheet5.write('A1', '#cells:' + str(e_cb2.get()) + '=CELL BALANCE')
+        if (genCB + ageCB + regCB == 3):
+            worksheet5.write('B1', '#')
+            worksheet5.write('C1', '#')
+            worksheet5.write('D1', '#')        
+            for count, eachRow in enumerate(range(2,2+regCount*genCount*ageCount*cellCount,genCount*ageCount*cellCount)):
+                worksheet5.write('A' + str(eachRow), e3.get() + str(count+1)) 
+                for count2, eachRow2 in enumerate(range(2+count*genCount*ageCount*cellCount,2+(count+1)*genCount*ageCount*cellCount,genCount*cellCount)):
+                    worksheet5.write('B' + str(eachRow2), e2.get() + str(count2+1))             
+                    for count3, eachRow3 in enumerate(range(count2*genCount*cellCount,((count2+1)*genCount*cellCount),cellCount)):
+                        worksheet5.write('C' + str(2+(count*ageCount*genCount*cellCount)+eachRow3), e1.get() + str(count3+1))
+                        for count4, eachRow4 in enumerate(range(count3*cellCount,((count3+1)*cellCount))):
+                            worksheet5.write('D' + str((2+(count*genCount*cellCount)+(count2*regCount*genCount*cellCount)+eachRow4)), "CELL" + str(count4+1))
+                            worksheet5.write('E' + str((2+(count*genCount*cellCount)+(count2*regCount*genCount*cellCount)+eachRow4)), "inf")
+        elif (genCB + ageCB + regCB == 2):
+            if genCB+ageCB == 2 and regCB == 0:
+                doubleInterlockCB(worksheet5, ageCount, genCount,cellCount,e2.get(),e1.get())
+            elif genCB+regCB == 2 and ageCB == 0:
+                doubleInterlockCB(worksheet5, regCount, genCount,cellCount,e3.get(),e1.get())
+            elif ageCB+regCB == 2 and genCB == 0:
+                doubleInterlockCB(worksheet5, regCount, ageCount,cellCount,e3.get(),e2.get())
+        elif (genCB + ageCB + regCB == 1):
+            if genCB == 1 and (ageCB+regCB == 0):
+                singleInterlockCB(worksheet5, genCount,cellCount,e1.get())
+            elif ageCB == 1 and (genCB+regCB == 0):
+                singleInterlockCB(worksheet5, ageCount,cellCount,e2.get())
+            elif regCB == 1 and (ageCB+genCB == 0):
+                singleInterlockCB(worksheet5, regCount,cellCount,e3.get())
+    
     #Interlock Quota
     if (interlockVar == 1 and (genVar+ageVar+regVar == 3)):
         worksheet4 = workbook.add_worksheet('Interlock Quota')
@@ -909,15 +1117,23 @@ def generateForm():
             doubleInterlock(workbook, ageCount, genCount,e2.get(),e1.get(),myFrame2.AgePercList,myFrame4.GenPercList)
         elif genVar+regVar == 2 and ageVar == 0:
             doubleInterlock(workbook, regCount, genCount,e3.get(),e1.get(),myFrame3.RegPercList,myFrame4.GenPercList)
-        elif ageVar+ageVar == 2 and genVar == 0:
+        elif ageVar+regVar == 2 and genVar == 0:
             doubleInterlock(workbook, regCount, ageCount,e3.get(),e2.get(),myFrame3.RegPercList,myFrame2.AgePercList)
     # Finally, close the Excel file
     # via the close() method.
+
+    worksheetLast = workbook.add_worksheet('OE PICK LEAST FILL')
+    worksheetLast.write('A1', '#=OE PICK LEAST FILL')
+    for count, eachRow in enumerate(range(indice+2, indice+2+19)):
+        worksheet.write('A' + str(eachRow), 'OEPick' + str(count+1))
+        worksheet.write('B' + str(eachRow), 'plus')
+        worksheetLast.write('A' + str(count + 2), 'OEPick' + str(count+1))
+        worksheetLast.write('B' + str(count + 2), 'inf')      
     workbook.close()
 
 #Function to handle the double interlocked demographics
 def doubleInterlock(workbook, inter1, inter2,variable1,variable2,perclist1,perclist2):
-    print("in doubleInt Function")
+    print("in doubleInterlock Function")
     InterlockArray = []
     worksheet4 = workbook.add_worksheet('Interlock Quota')
     worksheet4.write('A1', '#=Interlock Quota')       
@@ -928,6 +1144,29 @@ def doubleInterlock(workbook, inter1, inter2,variable1,variable2,perclist1,percl
             InterlockArray.append(perclist1[count]*perclist2[count2])
             worksheet4.write('B' + str(eachRow2), variable2 + str(count2+1))
             worksheet4.write('C' + str(eachRow2), round(InterlockArray[eachRow2-2]*int(e10.get()),None))
+
+#Function to handle the LEGACY double interlocked CELL BALANCE
+def doubleInterlockCB(workbook, inter1, inter2,cellCounts,variable1,variable2):
+    print("in doubleInterlockCB Function")
+    workbook.write('B1', '#')
+    workbook.write('C1', '#')
+    for count, eachRow in enumerate(range(2,2+inter1*inter2*cellCounts,inter2*cellCounts)):
+        workbook.write('A' + str(eachRow), variable1 + str(count+1)) 
+        for count2, eachRow2 in enumerate(range(2+count*inter2*cellCounts,2+(count+1)*inter2*cellCounts,cellCounts)):
+            workbook.write('B' + str(eachRow2), variable2 + str(count2+1))
+            for count3, eachRow3 in enumerate(range(count2*cellCounts,((count2+1)*cellCounts))):
+                workbook.write('C' + str(2+(count*cellCounts*inter2)+eachRow3), "CELL" + str(count3+1))
+                workbook.write('D' + str(2+(count*cellCounts*inter2)+eachRow3), "inf")
+
+#Function to handle the LEGACY single interlocked CELL BALANCE                
+def singleInterlockCB(workbook, inter1, cellCounts,variable1):
+    print("in singleInterlockCB Function")
+    workbook.write('B1', '#')
+    for count, eachRow in enumerate(range(2,2+inter1*cellCounts,cellCounts)):
+        workbook.write('A' + str(eachRow), variable1 + str(count+1)) 
+        for count2, eachRow2 in enumerate(range(2+count*cellCounts,2+(count+1)*cellCounts)):
+            workbook.write('B' + str(eachRow2), "CELL" + str(count2+1))
+            workbook.write('C' + str(eachRow2), "inf")
 
 #Following 3 functions calculates the gender, age and region hard quotas/soft qutoas respectively, also will store the % of each in an array for interlock quota calulation
 def GenderQuotaCalc(count):
